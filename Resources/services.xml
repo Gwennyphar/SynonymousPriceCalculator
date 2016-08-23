@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="synonymous_price_calculator.decorator"
+                 class="SynonymousPriceCalculator\Services\Price\PriceCalculationServiceDecorator"
+                 decorates="shopware_storefront.price_calculation_service"
+                 public="false">
+            <argument type="service" id="shopware_storefront.price_calculation_service.inner"/>
+        </service>
+    </services>
+</container>
