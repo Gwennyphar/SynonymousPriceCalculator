@@ -7,21 +7,25 @@ use Shopware\Bundle\StoreFrontBundle\Struct;
 
 class PriceCalculationServiceDecorator implements PriceCalculationServiceInterface
 {
-
     /**
      * @var PriceCalculationServiceInterface
      */
     private $sourceService;
 
-    public function __construct(PriceCalculationServiceInterface $service) {
+    /**
+     * @param PriceCalculationServiceInterface $service
+     */
+    public function __construct(PriceCalculationServiceInterface $service)
+    {
         $this->sourceService = $service;
     }
 
-    public function calculateProduct(
-        Struct\ListProduct $product,
-        Struct\ProductContextInterface $context
-    ) {
-
+    /**
+     * @param Struct\ListProduct $product
+     * @param Struct\ProductContextInterface $context
+     */
+    public function calculateProduct(Struct\ListProduct $product, Struct\ProductContextInterface $context)
+    {
         $tax = $context->getTaxRule($product->getTax()->getId());
 
         $prices = [];
@@ -56,12 +60,11 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
 
         //add state to the product which can be used to check if the prices are already calculated.
         $product->addState(Struct\ListProduct::STATE_PRICE_CALCULATED);
-
-
     }
 
     /**
      * Calculates the cheapest price considering the variant min purchase
+     *
      * @param Struct\ListProduct $product
      * @param Struct\Product\PriceRule $priceRule
      * @param Struct\ProductContextInterface $context
@@ -82,6 +85,7 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
             $priceRule->getUnit()->getMinPurchase() * $priceRule->getPseudoPrice()
         );
         $tax = $context->getTaxRule($product->getTax()->getId());
+
         return $this->calculatePriceStruct($priceRule, $tax, $context);
     }
 
@@ -221,5 +225,4 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
 
         return round($value, 3);
     }
-
 }
