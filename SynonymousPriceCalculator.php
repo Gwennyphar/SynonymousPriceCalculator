@@ -10,4 +10,6 @@ use Shopware\Components\Plugin;
  */
 class SynonymousPriceCalculator extends Plugin
 {
+
+
 }

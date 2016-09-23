@@ -10,22 +10,23 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
     /**
      * @var PriceCalculationServiceInterface
      */
-    private $sourceService;
+    private $decoratedService;
 
     /**
      * @param PriceCalculationServiceInterface $service
      */
     public function __construct(PriceCalculationServiceInterface $service)
     {
-        $this->sourceService = $service;
+        $this->decoratedService = $service;
     }
 
     /**
      * @param Struct\ListProduct $product
      * @param Struct\ProductContextInterface $context
      */
-    public function calculateProduct(Struct\ListProduct $product, Struct\ProductContextInterface $context)
-    {
+
+    public function calculateProduct(Struct\ListProduct $product, Struct\ProductContextInterface $context) {
+
         $tax = $context->getTaxRule($product->getTax()->getId());
 
         $prices = [];
@@ -60,11 +61,11 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
 
         //add state to the product which can be used to check if the prices are already calculated.
         $product->addState(Struct\ListProduct::STATE_PRICE_CALCULATED);
+
     }
 
     /**
      * Calculates the cheapest price considering the variant min purchase
-     *
      * @param Struct\ListProduct $product
      * @param Struct\Product\PriceRule $priceRule
      * @param Struct\ProductContextInterface $context
@@ -75,17 +76,7 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
         Struct\Product\PriceRule $priceRule,
         Struct\ProductContextInterface $context
     ) {
-        $priceRule->setPrice(
-            $priceRule->getUnit()->getMinPurchase() * $priceRule->getPrice()
-        );
-        $priceRule->getUnit()->setPurchaseUnit(
-            $priceRule->getUnit()->getMinPurchase() * $priceRule->getUnit()->getPurchaseUnit()
-        );
-        $priceRule->setPseudoPrice(
-            $priceRule->getUnit()->getMinPurchase() * $priceRule->getPseudoPrice()
-        );
         $tax = $context->getTaxRule($product->getTax()->getId());
-
         return $this->calculatePriceStruct($priceRule, $tax, $context);
     }
 
@@ -142,6 +133,9 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
      */
     private function calculatePrice($price, Struct\Tax $tax, Struct\ProductContextInterface $context)
     {
+
+        $price = 9;
+
         /**
          * Important:
          * We have to use the current customer group of the current user
@@ -160,11 +154,7 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
          * by the percentage discount value of the current customer group.
          */
         if ($customerGroup->useDiscount() && $customerGroup->getPercentageDiscount()) {
-            if ($customerGroup->getPercentageDiscount() != 0) {
-                $price = $price - ($price / 100 * $customerGroup->getPercentageDiscount());
-            } else {
-                $price = 0;
-            }
+            $price = $price - ($price / 100 * $customerGroup->getPercentageDiscount());
         }
 
         /**
@@ -180,15 +170,6 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
         if (!$customerGroup->displayGrossPrices()) {
             return round($price, 3);
         }
-
-
-        /**
-         * ------------------------------------------------------------------------------------------------------------
-         * Setting the price for an article. Hery you can deploy your own price calculation for articles.
-         * In this example the price is simply set to 1.00
-         * ------------------------------------------------------------------------------------------------------------
-         */
-        $price = 1;
 
         /**
          * Gross calculation:
@@ -225,4 +206,5 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
 
         return round($value, 3);
     }
+
 }
