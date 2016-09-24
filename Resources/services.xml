@@ -5,11 +5,11 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="synonymous_price_calculator.decorator"
+        <service id="synonymous_price_calculator.price_calulation_service_decorator"
                  class="SynonymousPriceCalculator\Services\Price\PriceCalculationServiceDecorator"
                  decorates="shopware_storefront.price_calculation_service"
                  public="false">
-            <argument type="service" id="shopware_storefront.price_calculation_service.inner"/>
+            <argument type="service" id="synonymous_price_calculator.price_calulation_service_decorator.inner"/>
         </service>
     </services>
 </container>

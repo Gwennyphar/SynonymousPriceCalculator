@@ -2,17 +2,23 @@
 <plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="../../../engine/Shopware/Components/Plugin/schema/plugin.xsd">
 
-    <label>Synonymous Price Calculator</label>
-    <version>0.0.1</version>
+    <label>Synonymous Price Calculator Demo</label>
+    <version>1.0.0</version>
     <copyright>Synonymous</copyright>
     <link>https://synonymous.rocks</link>
     <author>Synonymous</author>
-    <description><![CDATA[This plugin is a showcase and allows individual price calculation for articles.]]></description>
+    <description><![CDATA[This plugin is a demo that shows how to use service decorators for individual article price calculation.]]></description>
 
     <changelog version="0.0.1">
         <changes>Initial Release</changes>
     </changelog>
 
-    <compatibility minVersion="5.2.0" />
+    <changelog version="1.0.0">
+        <changes>Upgrade of service decorator</changes>
+        <changes>Update to 5.2.7 compatibility</changes>
+        <changes>Removed Lib/Helper.php</changes>
+    </changelog>
+
+    <compatibility minVersion="5.2.7" />
 
 </plugin>
