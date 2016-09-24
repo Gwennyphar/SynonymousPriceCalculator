@@ -26,7 +26,7 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
      */
     public function calculateProduct(Struct\ListProduct $product, Struct\ProductContextInterface $context) {
 
-        // Call inner (decorated) service method to bild product struct with prices
+        // Call inner (decorated) service method to build product struct with prices
         $this->decoratedService->calculateProduct($product,$context);
         $product->resetStates();
 
@@ -36,26 +36,32 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
         $prices = $product->getPrices();
         foreach($prices as &$price):
 
-            // Set the basic calculated price to 88
-            $price->setCalculatedPrice(88);
+            /**
+             * Calculate some random price between 90 and 99
+             */
+            $randomPrice = rand(90,99);
 
-            // If there is a pseudo price set it to 99
+            // Set the basic calculated price to $randomPrice
+            $price->setCalculatedPrice($randomPrice);
+
+            // If there is a pseudo price
             if($price->getCalculatedPseudoPrice()):
-                $price->setCalculatedPseudoPrice(99);
+                $price->setCalculatedPseudoPrice($randomPrice + 10);
             endif;
 
             // Set reference price
             if ($price->getCalculatedReferencePrice()):
-                $price->setCalculatedReferencePrice(77);
+                $price->setCalculatedReferencePrice($randomPrice);
             endif;
+
+            $product->setCheapestPrice($price);
+            $product->setCheapestUnitPrice($price);
 
         endforeach;
 
-
+        // Assign manipulated prices to product and set state to STATE_PRICE_CALCULATED
         $product->setPrices($prices);
         $product->addState(Struct\ListProduct::STATE_PRICE_CALCULATED);
-
-
 
     }
 
