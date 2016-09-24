@@ -51,9 +51,6 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
 
         endforeach;
 
-        echo '<h1>'.$product->getName().'</h1>';
-
-        sdump($product);
 
         $product->setPrices($prices);
         $product->addState(Struct\ListProduct::STATE_PRICE_CALCULATED);
