@@ -39,7 +39,7 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
             /**
              * Calculate some random price between 90 and 99
              */
-            $randomPrice = rand(90,99);
+            $randomPrice = rand(900,999);
 
             // Set the basic calculated price to $randomPrice
             $price->setCalculatedPrice($randomPrice);
