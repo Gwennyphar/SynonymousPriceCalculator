@@ -26,41 +26,35 @@ class PriceCalculationServiceDecorator implements PriceCalculationServiceInterfa
      */
     public function calculateProduct(Struct\ListProduct $product, Struct\ProductContextInterface $context) {
 
-        // Call inner (decorated) service method to build product struct with prices
+        // Get the customergroup of the currently logged in user
+        $customerGroup = $context->getCurrentCustomerGroup();
+
+        // Calculate some random price between 90 and 99
+        $randomPrice = rand(900, 999);
+        $randomPrice = 100;
+
+        // Delete all prices except the first one, cause we don´t have price rules on
+        // a self calculated price. Then caluclate the correct price and set it.
+        $priceRules = array();
+
+        $unit = new Struct\Product\Unit();
+        $priceRule = new Struct\Product\PriceRule();
+        $priceRule->setPrice($randomPrice);             // @TODO Set newly calculated NET price here
+        $priceRule->setPseudoPrice($randomPrice+100);   // @TODO Set original price here
+        $priceRule->setCustomerGroup($customerGroup);
+        $priceRule->setFrom(0);
+        $priceRule->setTo(null);
+        $priceRule->setUnit($unit);
+
+        // Assign manipulated pricerules to product
+        $priceRules[] = $priceRule;
+        $product->setPriceRules($priceRules);
+        $product->setCheapestPriceRule(clone $priceRules[0]);
+
+        // Call the decorated main service to calculate product prices
         $this->decoratedService->calculateProduct($product,$context);
-        $product->resetStates();
 
-        // Fetch prices of given product and calculate them according to our own
-        // rules. In this demo we simply override the calculated prices with fixed
-        // prices.
-        $prices = $product->getPrices();
-        foreach($prices as &$price):
-
-            /**
-             * Calculate some random price between 90 and 99
-             */
-            $randomPrice = rand(900,999);
-
-            // Set the basic calculated price to $randomPrice
-            $price->setCalculatedPrice($randomPrice);
-
-            // If there is a pseudo price
-            if($price->getCalculatedPseudoPrice()):
-                $price->setCalculatedPseudoPrice($randomPrice + 10);
-            endif;
-
-            // Set reference price
-            if ($price->getCalculatedReferencePrice()):
-                $price->setCalculatedReferencePrice($randomPrice);
-            endif;
-
-            $product->setCheapestPrice($price);
-            $product->setCheapestUnitPrice($price);
-
-        endforeach;
-
-        // Assign manipulated prices to product and set state to STATE_PRICE_CALCULATED
-        $product->setPrices($prices);
+        //add state to the product which can be used to check if the prices are already calculated.
         $product->addState(Struct\ListProduct::STATE_PRICE_CALCULATED);
 
     }
