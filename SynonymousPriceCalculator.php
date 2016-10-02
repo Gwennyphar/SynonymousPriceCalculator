@@ -89,17 +89,16 @@ class SynonymousPriceCalculator extends Plugin
         // price_calculation_service which is decorated by this plugin.
         $productService = Shopware()->Container()->get('shopware_storefront.product_service');
         $product = $productService->get($orderNumber,$context);
+        $grossPrice = $product->getCheapestPrice()->getCalculatedPrice();
 
+        // Get the tax
         $tax = $product->getTax();
-        $price = $product->getCheapestPrice()->getCalculatedPrice();
 
         // Caculate prices here
         if($customerGroup->displayGrossPrices()):
-            $grossPrice = $price;
             $netPrice = $grossPrice / (1 + $tax->getTax() / 100);
             $taxAmount = round($grossPrice-$netPrice,3);
         else:
-            $grossPrice = $price;
             $netPrice = $grossPrice;
             $taxAmount = 0;
         endif;
@@ -110,55 +109,8 @@ class SynonymousPriceCalculator extends Plugin
             SET quantity = '.$args->get('quantity').', price = '.$grossPrice.', netprice = '.$netPrice.', currencyFactor = '.$args->get('currencyFactor').', tax_rate = '.$taxAmount.'
             WHERE id = '.$args->get('id').' AND sessionID = "'.$sessionId.'" AND modus = 0';
 
-
         return $query;
 
     }
-
-//    /**
-//     * Due to the fact that the cart is on the old system and uses an own price calculation
-//     * algorithm and not the price_calculation_service, we have to emit the event
-//     * Shopware_Modules_Basket_AddArticle_FilterSql and manipulate the SQL query
-//     * which is executed each time a product is added to the cart.
-//     *
-//     * @param \Enlight_Event_EventArgs $args
-//     * @return string
-//     */
-//    public function basketAddArticleFilterSql(\Enlight_Event_EventArgs $args) {
-//
-//
-//        // Get the session ID
-//        $sessionId = $this->container->get('session')->get('sessionId');
-//        $userId = $this->container->get('session')->get('sUserId');
-//
-//        // Get orderNumber of article for order_basket id
-//        $article = $args->get('article');
-//
-//        // Get the shop context
-//        $context = $this->container->get('shopware_storefront.context_service')->getContext();
-//
-//        // Use the productService to get the product with prices calculated by the
-//        // price_calculation_service which is decorated by this plugin.
-//        $productService = Shopware()->Container()->get('shopware_storefront.product_service');
-//        $product = $productService->get($article["ordernumber"],$context);
-//
-//        $cheapestPrice = $product->getCheapestPrice();
-//
-//        // Add some dummy prices here
-//        $price = $cheapestPrice->getCalculatedPrice();
-//        $netPrice = $cheapestPrice->getRule()->getPrice();
-//
-//        // Manipulate the query so that the correct price is set on the statement
-//        $query = '
-//            INSERT INTO s_order_basket (id, sessionID, userID, articlename, articleID,
-//                ordernumber, shippingfree, quantity, price, netprice,
-//                datum, esdarticle, partnerID, config)
-//            VALUES ("", "'.$sessionId.'", "'.(string) $userId.'", "'.$article['articleName'].'", '.$article['articleID'].', "'.$article['ordernumber'].'", '.$article['shippingfree'].', '.$args->get('quantity').', '.$price.', '.$netPrice.' , "'.date('Y-m-d H:i:s').'", '.$args->get('esd').', "'.$args->get('partner').'", "")
-//        ';
-//
-//
-//        return $query;
-//
-//    }*/
 
 }
