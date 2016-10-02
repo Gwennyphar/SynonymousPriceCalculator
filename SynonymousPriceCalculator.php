@@ -21,7 +21,6 @@ class SynonymousPriceCalculator extends Plugin
             'Enlight_Controller_Action_PostDispatchSecure' => 'addTemplateDir',
             'Shopware_Plugins_HttpCache_GetCacheIds' => 'filterHttpCacheId',
             'Shopware_Modules_Basket_UpdateArticle_FilterSqlDefault' => 'basketUpdateArticleFilterSql'
-            //'Shopware_Modules_Basket_AddArticle_FilterSql' => 'basketAddArticleFilterSql'
         ];
     }
 
